@@ -1,9 +1,10 @@
+// login_screen.java
 package StudentSystem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.HashMap;
+import java.util.Map;
 
 public class login_screen {
     public JPanel mainPanel;
@@ -11,9 +12,11 @@ public class login_screen {
     private JPasswordField passwordField;
     private JButton loginButton;
     private JFrame frame;
+    private Map<String, String> studentCredentials;
 
     public login_screen(JFrame frame) {
         this.frame = frame;
+        initializeStudentCredentials();
         initComponents();
 
         // Customize the main panel with a gradient background
@@ -35,7 +38,7 @@ public class login_screen {
         };
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding around components
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         // Add a title label
         JLabel title = new JLabel("Login");
@@ -59,7 +62,7 @@ public class login_screen {
 
         // Add username text field
         usernameField = new JTextField(15);
-        usernameField.setBackground(new Color(132, 150, 169)); // Soft grayish-blue
+        usernameField.setBackground(new Color(132, 150, 169));
         usernameField.setForeground(Color.BLACK);
         usernameField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         gbc.gridx = 0;
@@ -76,9 +79,9 @@ public class login_screen {
         gbc.fill = GridBagConstraints.NONE;
         mainPanel.add(passwordLabel, gbc);
 
-        // Add password text field
+        // Add password field
         passwordField = new JPasswordField(15);
-        passwordField.setBackground(new Color(132, 150, 169)); // Soft grayish-blue
+        passwordField.setBackground(new Color(132, 150, 169));
         passwordField.setForeground(Color.BLACK);
         passwordField.setBorder(BorderFactory.createLineBorder(Color.WHITE, 1));
         gbc.gridx = 0;
@@ -88,7 +91,7 @@ public class login_screen {
 
         // Add login button
         loginButton = new JButton("Login");
-        loginButton.setBackground(new Color(62, 92, 116)); // Muted blue
+        loginButton.setBackground(new Color(62, 92, 116));
         loginButton.setForeground(Color.WHITE);
         loginButton.setFont(new Font("SansSerif", Font.BOLD, 16));
         loginButton.setFocusPainted(false);
@@ -106,21 +109,21 @@ public class login_screen {
             String username = usernameField.getText();
             String password = new String(passwordField.getPassword());
             if (username.equals("admin") && password.equals("password")) {
-                //JOptionPane.showMessageDialog(mainPanel, "Login successful!");
-
-                // Close login window and open admin home page
-                frame.dispose(); // Close the login screen
-                openAdminHomePage(); // Open the admin home page
+                frame.dispose();
+                openAdminHomePage();
             } else if (username.equals("student") && password.equals("password")) {
-              //  JOptionPane.showMessageDialog(mainPanel, "Login successful!");
-
-                // Close login window and open student home page
-                frame.dispose(); // Close the login screen
-                openStudentHomePage(); // Open the student home page
+                String studentId = studentCredentials.get(username);
+                frame.dispose();
+                openStudentHomePage(studentId);
             } else {
                 JOptionPane.showMessageDialog(mainPanel, "Invalid credentials. Please try again.");
             }
         });
+    }
+
+    private void initializeStudentCredentials() {
+        studentCredentials = new HashMap<>();
+        studentCredentials.put("student", "N001");  // Default student login maps to Ali's ID
     }
 
     private void openAdminHomePage() {
@@ -128,33 +131,32 @@ public class login_screen {
         homePage homePageScreen = new homePage(homeFrame);
         homeFrame.setContentPane(homePageScreen.mainPanel);
         homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        homeFrame.setSize(600, 400); // Adjusted size for home page
-        homeFrame.setLocationRelativeTo(null); // Center the frame on the screen
+        homeFrame.setSize(600, 400);
+        homeFrame.setLocationRelativeTo(null);
         homeFrame.setVisible(true);
     }
 
-    private void openStudentHomePage() {
+    private void openStudentHomePage(String studentId) {
         JFrame homeFrame = new JFrame("Student Home Page");
-        studentHomePage studentHomePageScreen = new studentHomePage(homeFrame);
+        studentHomePage studentHomePageScreen = new studentHomePage(homeFrame, studentId);
         homeFrame.setContentPane(studentHomePageScreen.mainPanel);
         homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        homeFrame.setSize(600, 400); // Adjusted size for home page
-        homeFrame.setLocationRelativeTo(null); // Center the frame on the screen
+        homeFrame.setSize(600, 400);
+        homeFrame.setLocationRelativeTo(null);
         homeFrame.setVisible(true);
     }
 
     private void initComponents() {
-        mainPanel = new JPanel(); // Ensure this is initialized
+        mainPanel = new JPanel();
     }
 
-    // Main method to start the login screen
     public static void main(String[] args) {
         JFrame loginFrame = new JFrame("Student Management System - Login");
         login_screen loginScreen = new login_screen(loginFrame);
         loginFrame.setContentPane(loginScreen.mainPanel);
         loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        loginFrame.setSize(400, 400); // Adjusted size for login
-        loginFrame.setLocationRelativeTo(null); // Center the frame on the screen
+        loginFrame.setSize(400, 400);
+        loginFrame.setLocationRelativeTo(null);
         loginFrame.setVisible(true);
     }
 }

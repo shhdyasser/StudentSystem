@@ -2,18 +2,22 @@ package StudentSystem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 public class studentViewPage {
     protected JPanel mainPanel;
+    private School school;
+    private String studentId; // Add this to store the logged-in student's ID
 
-    public studentViewPage(JFrame frame, School school) {
+    public studentViewPage(JFrame frame, School school, String studentId) { // Modified constructor
+        this.school = school;
+        this.studentId = studentId;
+
         // Initialize main panel with a more sophisticated layout
         mainPanel = new JPanel(new BorderLayout(10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Create a styled header
-        JLabel headerLabel = new JLabel("Student Records", SwingConstants.CENTER);
+        JLabel headerLabel = new JLabel("My Student Record", SwingConstants.CENTER);
         headerLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         headerLabel.setForeground(new Color(29, 59, 85));
         mainPanel.add(headerLabel, BorderLayout.NORTH);
@@ -25,37 +29,53 @@ public class studentViewPage {
         textArea.setBackground(new Color(250, 250, 250));
         textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Check if there are students in the school
-        List<Student> students = school.getStudents();
-        if (students == null || students.isEmpty()) {
-            textArea.setText("Error: No student data available.");
+        // Find the logged-in student
+        Student currentStudent = null;
+        for (Student student : school.getStudents()) {
+            if (student.getId().equals(studentId)) {
+                currentStudent = student;
+                break;
+            }
+        }
+
+        if (currentStudent == null) {
+            textArea.setText("Error: Student record not found.");
         } else {
             StringBuilder displayText = new StringBuilder();
 
-            for (Student student : students) {
-                // Add student header with formatting
-                displayText.append("═══════════════════════════════════════════\n");
-                displayText.append(String.format("Student ID: %s\n", student.getId()));
-                displayText.append(String.format("Name: %s\n", student.getName()));
-                displayText.append(String.format("Age: %d\n", student.getAge()));
-                displayText.append("Courses:\n");
+            // Add student information with formatting
+            displayText.append("═══════════════════════════════════════════\n");
+            displayText.append(String.format("Student ID: %s\n", currentStudent.getId()));
+            displayText.append(String.format("Name: %s\n", currentStudent.getName()));
+            displayText.append(String.format("Age: %d\n", currentStudent.getAge()));
+            displayText.append("Type: ").append(currentStudent instanceof NationalStudent ? "National Student" : "International Student").append("\n");
+            displayText.append("\nCourses:\n");
+            displayText.append("═══════════════════════════════════════════\n");
 
-                List<Course> courses = student.getCourses();
-                if (courses.isEmpty()) {
-                    displayText.append("   No courses registered\n");
-                } else {
-                    for (Course course : courses) {
-                        displayText.append(String.format("   ▶ %s (%s)\n",
-                                course.getCourseName(),
-                                course.getCourseCode()));
-                        displayText.append(String.format("      Grade: %.2f\n",
-                                course.getGrade()));
-                        displayText.append(String.format("      Instructor: %s\n",
-                                course.getInstructor()));
-                        displayText.append("\n");
-                    }
+            if (currentStudent.getCourses().isEmpty()) {
+                displayText.append("   No courses registered\n");
+            } else {
+                for (Course course : currentStudent.getCourses()) {
+                    displayText.append(String.format("   ▶ %s (%s)\n",
+                            course.getCourseName(),
+                            course.getCourseCode()));
+                    displayText.append(String.format("      Grade: %.2f\n",
+                            course.getGrade()));
+                    displayText.append(String.format("      Instructor: %s\n",
+                            course.getInstructor()));
+                    displayText.append("\n");
                 }
-                displayText.append("\n");
+            }
+
+            // Calculate and display GPA
+            if (!currentStudent.getCourses().isEmpty()) {
+                double totalGrade = 0;
+                for (Course course : currentStudent.getCourses()) {
+                    totalGrade += course.getGrade();
+                }
+                double gpa = totalGrade / currentStudent.getCourses().size();
+                displayText.append("═══════════════════════════════════════════\n");
+                displayText.append(String.format("Overall GPA: %.2f\n", gpa));
             }
 
             textArea.setText(displayText.toString());
@@ -69,7 +89,7 @@ public class studentViewPage {
         ));
         mainPanel.add(scrollPane, BorderLayout.CENTER);
 
-        // Create a button panel for multiple buttons
+        // Create a button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
 
         // Back button with styling
@@ -79,20 +99,17 @@ public class studentViewPage {
         backButton.setForeground(Color.WHITE);
         backButton.setFocusPainted(false);
         backButton.addActionListener(e -> {
-            frame.setContentPane(new studentHomePage(frame).mainPanel);
-            frame.revalidate();
+            frame.dispose();
+            JFrame homeFrame = new JFrame("Student Home Page");
+            studentHomePage homePage = new studentHomePage(homeFrame, studentId); // Pass studentId
+            homeFrame.setContentPane(homePage.mainPanel);
+            homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            homeFrame.setSize(600, 400);
+            homeFrame.setLocationRelativeTo(null);
+            homeFrame.setVisible(true);
         });
 
-        // Add buttons to button panel
         buttonPanel.add(backButton);
         mainPanel.add(buttonPanel, BorderLayout.SOUTH);
-
-        // Set the frame content
-        if (frame != null) {
-            frame.setContentPane(mainPanel);
-            frame.revalidate();
-        } else {
-            throw new IllegalArgumentException("Frame cannot be null");
-        }
     }
 }

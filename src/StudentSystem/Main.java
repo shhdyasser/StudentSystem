@@ -3,24 +3,31 @@ package StudentSystem;
 import javax.swing.*;
 
 public class Main {
+    private static School schoolInstance;  // Add this line
+
     public static void main(String[] args) {
         // First, create and set up the data model
-        School school = createAndPopulateSchool();
+        schoolInstance = createAndPopulateSchool();  // Changed this line
 
         // Launch the GUI
         SwingUtilities.invokeLater(() -> {
-            // Create and set up the main window
-            JFrame frame = new JFrame("Student Management System");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(800, 600);
-
-            // Pass the school object to the studentViewPage
-            new studentViewPage(frame, school);  // Pass the entire school object
-
-            // Center and show the window
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+            // Create and show the login screen
+            JFrame loginFrame = new JFrame("Student Management System - Login");
+            login_screen loginScreen = new login_screen(loginFrame);
+            loginFrame.setContentPane(loginScreen.mainPanel);
+            loginFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            loginFrame.setSize(400, 400);
+            loginFrame.setLocationRelativeTo(null);
+            loginFrame.setVisible(true);
         });
+    }
+
+    // Add this method
+    public static School getSchoolInstance() {
+        if (schoolInstance == null) {
+            schoolInstance = createAndPopulateSchool();
+        }
+        return schoolInstance;
     }
 
     private static School createAndPopulateSchool() {
