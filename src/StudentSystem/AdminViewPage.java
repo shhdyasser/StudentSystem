@@ -118,7 +118,7 @@ public class AdminViewPage {
         String[] studentTypes = {"National", "International"};
         JComboBox<String> typeCombo = new JComboBox<>(studentTypes);
 
-        // Course selection with more details
+        // Course selection
         DefaultListModel<Course> courseListModel = new DefaultListModel<>();
         for (Course course : school.getCourses()) {
             courseListModel.addElement(course);
