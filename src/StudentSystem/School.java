@@ -10,8 +10,6 @@ public class School {
     public School() {
         students = new ArrayList<>();
         courses = new ArrayList<>();
-
-        // Optional: Pre-populate some courses
         initializeCourses();
     }
 
@@ -48,12 +46,12 @@ public class School {
         return courses;
     }
 
-    public Course findCourseByCode(String courseCode) {
-        return courses.stream()
-                .filter(course -> course.getCourseCode().equals(courseCode))
-                .findFirst()
-                .orElse(null);
-    }
+//    public Course findCourseByCode(String courseCode) {
+//        return courses.stream()
+//                .filter(course -> course.getCourseCode().equals(courseCode))
+//                .findFirst()
+//                .orElse(null);
+//    }
 
     @Override
     public String toString() {
