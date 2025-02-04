@@ -44,6 +44,7 @@ public abstract class Student {
         courses.add(course);
     }
 
+
     public void editCourse(String courseCode, Course updatedCourse) {
         for (int i = 0; i < courses.size(); i++) {
             if (courses.get(i).getCourseCode().equals(courseCode)) {
@@ -57,6 +58,7 @@ public abstract class Student {
     public void deleteCourse(String courseCode) {
         courses.removeIf(course -> course.getCourseCode().equals(courseCode));
     }
+
 
     @Override
     public String toString() {

@@ -2,6 +2,7 @@ package StudentSystem;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 public class AdminViewPage {
@@ -14,7 +15,7 @@ public class AdminViewPage {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Header
-        JLabel headerLabel = new JLabel("Student Records Management", SwingConstants.CENTER);
+        JLabel headerLabel = new JLabel("Student Management", SwingConstants.CENTER);
         headerLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         headerLabel.setForeground(new Color(29, 59, 85));
         mainPanel.add(headerLabel, BorderLayout.NORTH);
@@ -28,8 +29,7 @@ public class AdminViewPage {
         for (Student student : school.getStudents()) {
             String courses = student.getCourses().stream()
                     .map(Course::getCourseCode)
-                    .reduce("", (a, b) -> a + ", " + b);
-            if (courses.startsWith(", ")) courses = courses.substring(2);
+                    .reduce("", (a, b) -> a + (a.isEmpty() ? "" : ", ") + b);
 
             String type = student instanceof NationalStudent ? "National" : "International";
 
@@ -118,6 +118,31 @@ public class AdminViewPage {
         String[] studentTypes = {"National", "International"};
         JComboBox<String> typeCombo = new JComboBox<>(studentTypes);
 
+        // Course selection with more details
+        DefaultListModel<Course> courseListModel = new DefaultListModel<>();
+        for (Course course : school.getCourses()) {
+            courseListModel.addElement(course);
+        }
+        JList<Course> availableCoursesList = new JList<>(courseListModel);
+        availableCoursesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        availableCoursesList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Course) {
+                    Course course = (Course) value;
+                    label.setText(course.getCourseCode() + " - " + course.getCourseName() +
+                            " (Instructor: " + course.getInstructor() + ")");
+                }
+                return label;
+            }
+        });
+        JScrollPane courseScrollPane = new JScrollPane(availableCoursesList);
+        courseScrollPane.setPreferredSize(new Dimension(300, 150));
+
         // Layout components
         gbc.gridx = 0; gbc.gridy = 0;
         dialog.add(new JLabel("Name:"), gbc);
@@ -139,18 +164,35 @@ public class AdminViewPage {
         gbc.gridx = 1;
         dialog.add(typeCombo, gbc);
 
-        JButton saveButton = new JButton("Save");
         gbc.gridx = 0; gbc.gridy = 4;
+        dialog.add(new JLabel("Courses:"), gbc);
+        gbc.gridx = 1;
+        dialog.add(courseScrollPane, gbc);
+
+        JButton saveButton = new JButton("Save");
+        gbc.gridx = 0; gbc.gridy = 5;
         gbc.gridwidth = 2;
         dialog.add(saveButton, gbc);
 
         saveButton.addActionListener(e -> {
             try {
-                String name = nameField.getText();
-                String id = idField.getText();
+                // Validate inputs
+                String name = nameField.getText().trim();
+                String id = idField.getText().trim();
                 int age = Integer.parseInt(ageField.getText());
                 String type = (String) typeCombo.getSelectedItem();
 
+                // Validate name and ID
+                if (name.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "Name cannot be empty.");
+                    return;
+                }
+                if (id.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "ID cannot be empty.");
+                    return;
+                }
+
+                // Create student
                 Student newStudent;
                 if ("National".equals(type)) {
                     newStudent = new NationalStudent(name, id, age);
@@ -158,8 +200,16 @@ public class AdminViewPage {
                     newStudent = new IgStudent(name, id, age);
                 }
 
+                // Add selected courses
+                List<Course> selectedCourses = availableCoursesList.getSelectedValuesList();
+                for (Course course : selectedCourses) {
+                    newStudent.addCourse(course);
+                }
+
+                // Add student to school
                 school.addStudent(newStudent);
                 dialog.dispose();
+
                 // Refresh view
                 parentFrame.setContentPane(new AdminViewPage(parentFrame, school).mainPanel);
                 parentFrame.revalidate();
@@ -200,6 +250,49 @@ public class AdminViewPage {
         JTextField nameField = new JTextField(student.getName(), 20);
         JTextField ageField = new JTextField(String.valueOf(student.getAge()), 20);
 
+        // Course selection with more details
+        DefaultListModel<Course> courseListModel = new DefaultListModel<>();
+        // Add available courses
+        for (Course course : school.getCourses()) {
+            courseListModel.addElement(course);
+        }
+        JList<Course> availableCoursesList = new JList<>(courseListModel);
+        availableCoursesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+        // Pre-select student's current courses
+        List<Course> studentCourses = student.getCourses();
+        int[] selectedIndices = new int[studentCourses.size()];
+        for (int i = 0; i < studentCourses.size(); i++) {
+            Course studentCourse = studentCourses.get(i);
+            for (int j = 0; j < courseListModel.size(); j++) {
+                if (courseListModel.get(j).getCourseCode().equals(studentCourse.getCourseCode())) {
+                    selectedIndices[i] = j;
+                    break;
+                }
+            }
+        }
+        availableCoursesList.setSelectedIndices(selectedIndices);
+
+        // Custom cell renderer
+        availableCoursesList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(
+                    JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(
+                        list, value, index, isSelected, cellHasFocus);
+                if (value instanceof Course) {
+                    Course course = (Course) value;
+                    label.setText(course.getCourseCode() + " - " + course.getCourseName() +
+                            " (Instructor: " + course.getInstructor() + ")");
+                }
+                return label;
+            }
+        });
+
+        JScrollPane courseScrollPane = new JScrollPane(availableCoursesList);
+        courseScrollPane.setPreferredSize(new Dimension(300, 150));
+
         // Layout components
         gbc.gridx = 0; gbc.gridy = 0;
         dialog.add(new JLabel("Name:"), gbc);
@@ -211,8 +304,13 @@ public class AdminViewPage {
         gbc.gridx = 1;
         dialog.add(ageField, gbc);
 
-        JButton saveButton = new JButton("Save");
         gbc.gridx = 0; gbc.gridy = 2;
+        dialog.add(new JLabel("Courses:"), gbc);
+        gbc.gridx = 1;
+        dialog.add(courseScrollPane, gbc);
+
+        JButton saveButton = new JButton("Save");
+        gbc.gridx = 0; gbc.gridy = 3;
         gbc.gridwidth = 2;
         dialog.add(saveButton, gbc);
 
@@ -227,9 +325,18 @@ public class AdminViewPage {
                     return;
                 }
 
-                // Update the student's details
+                // Update the student's basic details
                 finalStudent.setName(newName);
                 finalStudent.setAge(newAge);
+
+                // Clear existing courses
+                finalStudent.getCourses().clear();
+
+                // Add selected courses
+                List<Course> selectedCourses = availableCoursesList.getSelectedValuesList();
+                for (Course course : selectedCourses) {
+                    finalStudent.addCourse(course);
+                }
 
                 dialog.dispose();
                 // Refresh view
