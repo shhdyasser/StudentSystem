@@ -39,46 +39,25 @@ public class homePage {
         mainPanel.add(titlePanel, BorderLayout.NORTH);
 
         JPanel buttonPanel = new JPanel();
-        buttonPanel.setLayout(new GridLayout(2, 2, 10, 10));
+        buttonPanel.setLayout(new GridLayout(2, 60, 50, 80));
         buttonPanel.setOpaque(false);
 
         JButton viewButton = createStyledButton("View Students");
-        JButton editButton = createStyledButton("Edit Students");
-        JButton addButton = createStyledButton("Add Student");
-        JButton deleteButton = createStyledButton("Delete Student");
 
         buttonPanel.add(viewButton);
-        buttonPanel.add(editButton);
-        buttonPanel.add(addButton);
-        buttonPanel.add(deleteButton);
-
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
 
         // Add logout button
         JButton logoutButton = createStyledButton("Logout");
-        logoutButton.setPreferredSize(new Dimension(100, 40));
+        logoutButton.setPreferredSize(new Dimension(200, 40));
         JPanel logoutPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        logoutButton.setBackground(new Color(170, 50, 50));
         logoutPanel.setOpaque(false);
         logoutPanel.add(logoutButton);
         mainPanel.add(logoutPanel, BorderLayout.SOUTH);
 
         // Button Actions
         viewButton.addActionListener(e -> {
-            frame.setContentPane(new AdminViewPage(frame, school).mainPanel);
-            frame.revalidate();
-        });
-
-        editButton.addActionListener(e -> {
-            frame.setContentPane(new AdminViewPage(frame, school).mainPanel);
-            frame.revalidate();
-        });
-
-        addButton.addActionListener(e -> {
-            frame.setContentPane(new AdminViewPage(frame, school).mainPanel);
-            frame.revalidate();
-        });
-
-        deleteButton.addActionListener(e -> {
             frame.setContentPane(new AdminViewPage(frame, school).mainPanel);
             frame.revalidate();
         });
