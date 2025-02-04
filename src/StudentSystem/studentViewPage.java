@@ -17,7 +17,7 @@ public class studentViewPage {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
 
         // Create a styled header
-        JLabel headerLabel = new JLabel("My Student Record", SwingConstants.CENTER);
+        JLabel headerLabel = new JLabel("Student Info ", SwingConstants.CENTER);
         headerLabel.setFont(new Font("SansSerif", Font.BOLD, 24));
         headerLabel.setForeground(new Color(29, 59, 85));
         mainPanel.add(headerLabel, BorderLayout.NORTH);
