@@ -218,12 +218,19 @@ public class AdminViewPage {
 
         saveButton.addActionListener(e -> {
             try {
-                // Update student properties
-                // Note: In a real application, you'd want to add proper setters to the Student class
-                // This is a simplified example
+                String newName = nameField.getText().trim();
                 int newAge = Integer.parseInt(ageField.getText());
-                // Update the student object
-                // You'll need to add appropriate setters to your Student class
+
+                // Validate inputs
+                if (newName.isEmpty()) {
+                    JOptionPane.showMessageDialog(dialog, "Name cannot be empty.");
+                    return;
+                }
+
+                // Update the student's details
+                finalStudent.setName(newName);
+                finalStudent.setAge(newAge);
+
                 dialog.dispose();
                 // Refresh view
                 parentFrame.setContentPane(new AdminViewPage(parentFrame, school).mainPanel);
