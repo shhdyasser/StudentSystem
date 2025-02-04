@@ -33,39 +33,24 @@ public class School {
         return students;
     }
 
-    // New methods for course management
-    public void addCourse(Course course) {
-        courses.add(course);
-    }
-
-    public void removeCourse(String courseCode) {
-        courses.removeIf(course -> course.getCourseCode().equals(courseCode));
-    }
-
     public List<Course> getCourses() {
         return courses;
     }
 
-//    public Course findCourseByCode(String courseCode) {
-//        return courses.stream()
-//                .filter(course -> course.getCourseCode().equals(courseCode))
-//                .findFirst()
-//                .orElse(null);
+//    @Override
+//    public String toString() {
+//        StringBuilder result = new StringBuilder();
+//        result.append("Students:\n");
+//        for (Student student : students) {
+//            result.append(student.toString()).append("\n");
+//        }
+//
+//        result.append("\nAvailable Courses:\n");
+//        for (Course course : courses) {
+//            result.append(course.toString()).append("\n");
+//        }
+//
+//        return result.toString();
 //    }
 
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        result.append("Students:\n");
-        for (Student student : students) {
-            result.append(student.toString()).append("\n");
-        }
-
-        result.append("\nAvailable Courses:\n");
-        for (Course course : courses) {
-            result.append(course.toString()).append("\n");
-        }
-
-        return result.toString();
-    }
 }
