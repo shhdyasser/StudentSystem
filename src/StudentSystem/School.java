@@ -15,12 +15,12 @@ public class School {
         initializeCourses();
     }
 
-    // Optional method to pre-populate courses
+    // method to pre-populate courses
     private void initializeCourses() {
-        courses.add(new Course("CS101", "Introduction to Programming", 0.0, "Dr. Smith"));
-        courses.add(new Course("MATH201", "Calculus", 0.0, "Prof. Johnson"));
-        courses.add(new Course("ENG102", "English Composition", 0.0, "Ms. Williams"));
-        courses.add(new Course("PHYS101", "Physics Fundamentals", 0.0, "Dr. Brown"));
+        courses.add(new Course("CCS2304", "Advanced Programming", 0.0, "Dr. Hossam"));
+        courses.add(new Course("EBA3202", "Differential Equations", 0.0, "Dr. Asmaa"));
+        courses.add(new Course("CCS3402", "Theory of computation", 0.0, "Dr. Radwa"));
+        courses.add(new Course("CCS2103", "Computer Architecture", 0.0, "Dr. Habrouk"));
     }
 
     public void addStudent(Student student) {
