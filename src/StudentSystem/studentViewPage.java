@@ -73,7 +73,7 @@ public class studentViewPage {
                 for (Course course : currentStudent.getCourses()) {
                     totalGrade += course.getGrade();
                 }
-                double gpa = totalGrade / currentStudent.getCourses().size();
+                double gpa = (totalGrade / currentStudent.getCourses().size()) % 4;
                 displayText.append("═══════════════════════════════════════════\n");
                 displayText.append(String.format("Overall GPA: %.2f\n", gpa));
             }
