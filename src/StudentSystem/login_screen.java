@@ -123,7 +123,7 @@ public class login_screen {
 
     private void initializeStudentCredentials() {
         studentCredentials = new HashMap<>();
-        studentCredentials.put("student", "N001");  // Default student login maps to Ali's ID
+        studentCredentials.put("student", "N001");  // Default login to Ali
     }
 
     private void openAdminHomePage() {
