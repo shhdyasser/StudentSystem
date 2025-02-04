@@ -45,21 +45,6 @@ public abstract class Student {
     }
 
 
-    public void editCourse(String courseCode, Course updatedCourse) {
-        for (int i = 0; i < courses.size(); i++) {
-            if (courses.get(i).getCourseCode().equals(courseCode)) {
-                courses.set(i, updatedCourse);
-                return;
-            }
-        }
-        System.out.println("Course not found!");
-    }
-
-    public void deleteCourse(String courseCode) {
-        courses.removeIf(course -> course.getCourseCode().equals(courseCode));
-    }
-
-
     @Override
     public String toString() {
         String result = "ID: " + id + ", Name: " + name + ", Age: " + age + "\nCourses:\n";

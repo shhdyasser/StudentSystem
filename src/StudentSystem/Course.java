@@ -29,11 +29,6 @@ public class Course {
         return instructor;
     }
 
-    // Setters
-    public void setGrade(double grade) {
-        this.grade = grade;
-    }
-
     @Override
     public String toString() {
         return courseCode + " - " + courseName + " (Grade: " + grade + ", Instructor: " + instructor + ")";
